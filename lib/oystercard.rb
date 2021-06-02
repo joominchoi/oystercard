@@ -1,7 +1,9 @@
 class Oystercard
   attr_reader :balance, :status
 
+  MIN_BALANCE = 1
   LIMIT = 90
+  
 
   def initialize
     @balance = 0
@@ -23,6 +25,7 @@ class Oystercard
   end
 
   def touch_in
+    fail 'The minimum balance required to touch in is £1' if @balance < MIN_BALANCE
     @status = true
   end
 

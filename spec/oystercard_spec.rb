@@ -14,7 +14,7 @@ describe Oystercard do
     end
 
     it 'enforces maximum balance of 90' do
-      expect { subject.top_up 91 }.to raise_error("The card limit is £#{Oystercard::LIMIT}")
+      expect { subject.top_up(91) }.to raise_error("The card limit is £#{Oystercard::LIMIT}")
     end
 
   end
@@ -39,6 +39,7 @@ describe Oystercard do
     end
 
     it 'displays true when touched in' do
+      subject.top_up(10)
       subject.touch_in
       expect(subject).to be_in_journey
     end
@@ -46,6 +47,14 @@ describe Oystercard do
     it 'displays false when touched out' do
       subject.touch_out
       expect(subject).not_to be_in_journey
+    end
+
+    context '' do
+
+      it "can't touch in if below minimum balance" do
+        expect { subject.touch_in }.to raise_error "The minimum balance required to touch in is £#{Oystercard::MIN_BALANCE}"
+      end
+
     end
   
   end
