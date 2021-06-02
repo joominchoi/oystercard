@@ -30,4 +30,24 @@ describe Oystercard do
 
   end
 
+  context '#in_journey?' do
+
+    it { is_expected.to respond_to(:in_journey?) }
+
+    it 'displays false when not in journey' do
+      expect(subject).not_to be_in_journey
+    end
+
+    it 'displays true when touched in' do
+      subject.touch_in
+      expect(subject).to be_in_journey
+    end
+
+    it 'displays false when touched out' do
+      subject.touch_out
+      expect(subject).not_to be_in_journey
+    end
+  
+  end
+
 end
