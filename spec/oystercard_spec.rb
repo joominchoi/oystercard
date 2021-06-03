@@ -3,9 +3,16 @@ require 'Oystercard'
 describe Oystercard do
 
   let(:station){ double :station }
+  let(:entry_station) { double :station }
+  let(:exit_station) { double :station }
+  let(:journey){ {entry_station: entry_station, exit_station: exit_station} }
 
   it 'shows oystercard balance' do
     expect(subject.balance).to eq 0
+  end
+
+  it 'has an empty journey to begin with' do
+    expect(subject.journey_list).to be_empty
   end
 
   context '#top_up' do
@@ -21,27 +28,6 @@ describe Oystercard do
 
   end
 
-  context '#in_journey?' do
-
-    it { is_expected.to respond_to(:in_journey?) }
-
-    it 'displays false when not in journey' do
-      expect(subject).not_to be_in_journey
-    end
-
-    it 'displays true when touched in' do
-      subject.top_up(10)
-      subject.touch_in(station)
-      expect(subject).to be_in_journey
-    end
-
-    it 'displays false when touched out' do
-      subject.touch_out
-      expect(subject).not_to be_in_journey
-    end
-
-  end
-  
   context '#touch_in' do
     
     it "can't touch in if below minimum balance" do
@@ -59,9 +45,27 @@ describe Oystercard do
   context '#touch_out' do
     
     it 'deducts minimum fare from balance when touched out' do
-      expect { subject.touch_out }.to change{ subject.balance }.by(-Oystercard::MIN_FARE)
+      expect { subject.touch_out(station) }.to change{ subject.balance }.by(-Oystercard::MIN_FARE)
+    end
+
+    it 'remembers exit station after touch out' do
+      subject.top_up(10)
+      subject.touch_in(entry_station)
+      subject.touch_out(exit_station)
+      expect(subject.exit_station).to eq exit_station
     end
   
+  end
+
+  context '#journey_creator' do
+    
+    it 'stores a journey' do
+      subject.top_up(10)
+      subject.touch_in(entry_station)
+      subject.touch_out(exit_station)
+      expect(subject.journey_list).to include journey
+    end
+
   end
 
 end
