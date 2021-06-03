@@ -8,3 +8,5 @@ attr_reader :name, :zone
   end
 
 end
+
+#amended commit message
